@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 
+import FileCard from "../../components/fileCard"
+
 type Props = {}
 
 const IndexPage = (props: Props) => {
@@ -28,13 +30,6 @@ const IndexPage = (props: Props) => {
   const [id, setId] = React.useState("")
   const { isLoaded, userId, sessionId, getToken } = useAuth()
   const [docInfo, setDocInfo] = React.useState<any>({})
-  const [loading, setLoading] = React.useState(false)
-
-  const tFile = {
-    name: "The way the world works",
-    date: "10/10/2021",
-    size: "3.4 mb",
-  }
 
   const handleFileChange = async (name: string) => {
     if (id == "") return
@@ -49,7 +44,7 @@ const IndexPage = (props: Props) => {
       }
     }
     setUploading(true)
-    const maxSize = 20 * 1024 * 1024 // 20 MB in bytes
+    const maxSize = 15 * 1024 * 1024
     if (res != null && file != null) {
       if (file && file.size <= maxSize && file.type === "application/pdf") {
         const reader = new FileReader()
@@ -86,7 +81,7 @@ const IndexPage = (props: Props) => {
             }
             await cloudDb.update(updatedDoc, id)
             console.log("File uploaded:", driveFile)
-            window.location.href = `/myfiles/${id}/${docNum}.pdf`
+            window.location.reload()
           } else if (fileData instanceof ArrayBuffer) {
             const uint8Array = new Uint8Array(fileData)
             console.log("uploading file, please wait...")
@@ -104,7 +99,7 @@ const IndexPage = (props: Props) => {
             }
             await cloudDb.update(updatedDoc, id)
             console.log("File uploaded:", driveFile)
-            window.location.href = `/myfiles/${id}/${docNum}.pdf`
+            window.location.reload()
           } else {
             console.log("Invalid file data format")
           }
@@ -148,7 +143,6 @@ const IndexPage = (props: Props) => {
     console.log(id)
     if (id == "") return
     async function exp() {
-      setLoading(true)
       const res = await cloudDb.get(id)
       if (res == null) {
         cloudDb.put({ numDocs: 0 }, id)
@@ -157,7 +151,6 @@ const IndexPage = (props: Props) => {
         console.log(await cloudDb.get(id))
       }
       console.log("done")
-      setLoading(false)
     }
     exp()
   }, [id])
@@ -170,25 +163,19 @@ const IndexPage = (props: Props) => {
         </h1>
         <div className="dark:bg-gray-900 bg-gray-100 w-full max-w-[700px] p-2.5 flex items-center justify-center h-[550px] rounded-xl">
           <div className="bg-background grid p-2.5 rounded-lg w-full max-w-[200px] gap-1">
-            {Object.keys(docInfo).length !== 0 ? (
+            {Object.keys(docInfo).length !== 0 && docInfo.numDocs ? (
               <>
                 {Object.keys(docInfo).map((key) => {
                   if (key.substring(0, 4) == "docs") {
                     const doc = docInfo[key]
                     console.log(doc)
                     return (
-                      <>
-                        <h1 className="text-lg font-semibold border-b py-1 leading-6 mb-1">
-                          {doc.name}
-                        </h1>
-                        <div className="text-xs text-muted-foreground">
-                          Date uploaded:{" "}
-                          <span className="italic">{doc.date}</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Size: <span className="italic">{doc.size/1000} kb</span>
-                        </div>
-                      </>
+                      <FileCard
+                        name={doc.name}
+                        path={doc.path}
+                        date={doc.date}
+                        size={doc.size}
+                      />
                     )
                   }
                 })}
