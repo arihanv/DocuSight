@@ -31,6 +31,24 @@ const IndexPage = (props: Props) => {
   const { isLoaded, userId, sessionId, getToken } = useAuth()
   const [docInfo, setDocInfo] = React.useState<any>({})
 
+
+  async function exp() {
+    if (id == "") return
+    const res = await cloudDb.get(id)
+    if (res == null) {
+      cloudDb.put({ numDocs: 0 }, id)
+    } else {
+      setDocInfo(await cloudDb.get(id))
+      console.log(await cloudDb.get(id))
+    }
+    console.log("done")
+  }
+  
+  React.useEffect(() => {
+    console.log(id)
+    exp()
+  }, [id])
+  
   const handleFileChange = async (name: string) => {
     if (id == "") return
     if (name == "") return
@@ -138,22 +156,6 @@ const IndexPage = (props: Props) => {
   if (!isLoaded || !userId) {
     return null
   }
-
-  React.useEffect(() => {
-    console.log(id)
-    if (id == "") return
-    async function exp() {
-      const res = await cloudDb.get(id)
-      if (res == null) {
-        cloudDb.put({ numDocs: 0 }, id)
-      } else {
-        setDocInfo(await cloudDb.get(id))
-        console.log(await cloudDb.get(id))
-      }
-      console.log("done")
-    }
-    exp()
-  }, [id])
 
   return (
     <section className="container grid items-center gap-6 pb-8 py-5 md:py-8">
