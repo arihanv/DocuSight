@@ -36,12 +36,6 @@ export function MainNav({ items }: MainNavProps) {
                 </Link>
               )
           )}
-           <SignInButton>
-        <Button className="flex flex-row gap-2">
-				Sign in
-				<UserPlus className="w-4 h-4"/>
-			</Button>
-        </SignInButton>
         </nav>
       ) : null}
     </div>

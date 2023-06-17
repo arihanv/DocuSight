@@ -20,7 +20,6 @@ export default function IndexPage() {
             </p>
             <Link
               href={"/dashboard"}
-              target="_blank"
               rel="noreferrer"
               className={buttonVariants()}
             >
@@ -48,9 +47,7 @@ export default function IndexPage() {
                 height={250}
                 width={250}
               ></Image>
-              <div className="">
-                Upload A PDF
-              </div>
+              <div className="">Upload A PDF</div>
             </div>
             <div className="flex flex-col gap-1 items-center">
               <Image
@@ -60,9 +57,7 @@ export default function IndexPage() {
                 height={250}
                 width={250}
               ></Image>
-              <div className="">
-                Chat With Our AI
-              </div>
+              <div className="">Chat With Our AI</div>
             </div>
           </div>
         </div>
