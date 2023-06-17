@@ -35,7 +35,7 @@ export function SiteHeader() {
             {isDesktop ? (
               <>
                 <SignedOut>
-                <SignInButton>
+                <SignInButton redirectUrl={"/dashboard"}>
                   <Button className="flex w-full flex-row gap-2">
                     Sign in
                     <UserPlus className="w-4 h-4" />
@@ -67,7 +67,7 @@ export function SiteHeader() {
             {!isDesktop && (
               <>
                 <SignedOut>
-                  <SignInButton>
+                  <SignInButton redirectUrl={"/dashboard"}>
                     <Button className="flex w-full flex-row gap-2">
                       Sign in
                       <UserPlus className="w-4 h-4" />
