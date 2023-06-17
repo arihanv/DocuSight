@@ -36,7 +36,7 @@ export default function IndexPage() {
         </div>
         <div className="flex-col flex flex-wrap-reverse justify-center w-full items-center border-b py-5 gap-2">
           <h1 className="text-5xl font-extrabold leading-tight tracking-tighter flex gap-3 items-center">
-            It's Easy
+            It&apos;s Easy
           </h1>
           <div className="flex gap-10">
             <div className="flex flex-col gap-1 items-center">
