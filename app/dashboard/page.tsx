@@ -1,10 +1,11 @@
 "use client"
 
 import React from "react"
+import { cloudDb, cloudStore } from "@/api/cloud"
 import { encryptKey } from "@/api/utils"
-import { auth } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs"
 import { Loader2, Upload } from "lucide-react"
-import { SignedIn } from "@clerk/nextjs"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,12 +20,15 @@ import { Input } from "@/components/ui/input"
 type Props = {}
 
 const IndexPage = (props: Props) => {
-  const [file, setFile] = React.useState({})
+  const [file, setFile] = React.useState<any>({})
   const [modalOpen, setModalOpen] = React.useState(false)
   const [uploading, setUploading] = React.useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [name, setName] = React.useState<string>("")
   const [id, setId] = React.useState("")
+  const { isLoaded, userId, sessionId, getToken } = useAuth()
+  const [docInfo, setDocInfo] = React.useState<any>({})
+  const [loading, setLoading] = React.useState(false)
 
   const tFile = {
     name: "The way the world works",
@@ -32,9 +36,92 @@ const IndexPage = (props: Props) => {
     size: "3.4 mb",
   }
 
+  const handleFileChange = async (name: string) => {
+    if (id == "") return
+    if (name == "") return
+    setModalOpen(false)
+    const fileName = name
+    const res = await cloudDb.get(id)
+    if (res != null) {
+      if (res.numDocs != null && (res.numDocs as number) > 2) {
+        console.log("too many docs")
+        return
+      }
+    }
+    setUploading(true)
+    const maxSize = 20 * 1024 * 1024 // 20 MB in bytes
+    if (res != null && file != null) {
+      if (file && file.size <= maxSize && file.type === "application/pdf") {
+        const reader = new FileReader()
+        let missingDocNum = null
+
+        for (let i = 0; i <= 2; i++) {
+          const docNum = `docs${i}`
+          if (!(docNum in res)) {
+            missingDocNum = i
+            break
+          }
+        }
+        console.log(missingDocNum)
+
+        const docNum = `docs${missingDocNum}`
+
+        reader.onload = async () => {
+          const fileData = reader.result
+
+          if (typeof fileData === "string") {
+            const buffer = Buffer.from(fileData, "binary")
+            console.log("uploading file, please wait...")
+            const driveFile = await cloudStore.put(`${id}/${docNum}.pdf`, {
+              data: buffer,
+            })
+            const updatedDoc = {
+              [`${docNum}`]: {
+                name: fileName,
+                path: `${id}/${docNum}.pdf`,
+                date: new Date().toLocaleDateString(),
+                size: file.size,
+              },
+              numDocs: cloudDb.util.increment(1),
+            }
+            await cloudDb.update(updatedDoc, id)
+            console.log("File uploaded:", driveFile)
+            window.location.href = `/myfiles/${id}/${docNum}.pdf`
+          } else if (fileData instanceof ArrayBuffer) {
+            const uint8Array = new Uint8Array(fileData)
+            console.log("uploading file, please wait...")
+            const driveFile = await cloudStore.put(`${id}/${docNum}.pdf`, {
+              data: uint8Array,
+            })
+            const updatedDoc = {
+              [`${docNum}`]: {
+                name: fileName,
+                path: `${id}/${docNum}.pdf`,
+                date: new Date().toLocaleDateString(),
+                size: file.size,
+              },
+              numDocs: cloudDb.util.increment(1),
+            }
+            await cloudDb.update(updatedDoc, id)
+            console.log("File uploaded:", driveFile)
+            window.location.href = `/myfiles/${id}/${docNum}.pdf`
+          } else {
+            console.log("Invalid file data format")
+          }
+        }
+        reader.readAsArrayBuffer(file)
+      } else {
+        console.log("Invalid file")
+      }
+    }
+  }
+
   React.useEffect(() => {
-    console.log(id)
-  }, [id])
+    if (userId) {
+      console.log(encryptKey(userId, userId, 8))
+      setId(encryptKey(userId, userId, 8))
+    }
+  }, [userId])
 
   React.useEffect(() => {
     console.log(file)
@@ -49,8 +136,31 @@ const IndexPage = (props: Props) => {
   const handleFileUpload = (event: any) => {
     setModalOpen(true)
     setFile(event.target.files[0])
+    setName(event.target.files[0].name)
     console.log(event.target.files[0])
   }
+
+  if (!isLoaded || !userId) {
+    return null
+  }
+
+  React.useEffect(() => {
+    console.log(id)
+    if (id == "") return
+    async function exp() {
+      setLoading(true)
+      const res = await cloudDb.get(id)
+      if (res == null) {
+        cloudDb.put({ numDocs: 0 }, id)
+      } else {
+        setDocInfo(await cloudDb.get(id))
+        console.log(await cloudDb.get(id))
+      }
+      console.log("done")
+      setLoading(false)
+    }
+    exp()
+  }, [id])
 
   return (
     <section className="container grid items-center gap-6 pb-8 py-5 md:py-8">
@@ -60,17 +170,28 @@ const IndexPage = (props: Props) => {
         </h1>
         <div className="dark:bg-gray-900 bg-gray-100 w-full max-w-[700px] p-2.5 flex items-center justify-center h-[550px] rounded-xl">
           <div className="bg-background grid p-2.5 rounded-lg w-full max-w-[200px] gap-1">
-            {Object.keys(file).length !== 0 ? (
+            {Object.keys(docInfo).length !== 0 ? (
               <>
-                <h1 className="text-lg font-semibold border-b py-1 leading-6 mb-1">
-                  The way the world works
-                </h1>
-                <div className="text-xs text-muted-foreground">
-                  Date uploaded: <span className="italic">10/10/2021</span>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Size: <span className="italic">3.4 mb</span>
-                </div>
+                {Object.keys(docInfo).map((key) => {
+                  if (key.substring(0, 4) == "docs") {
+                    const doc = docInfo[key]
+                    console.log(doc)
+                    return (
+                      <>
+                        <h1 className="text-lg font-semibold border-b py-1 leading-6 mb-1">
+                          {doc.name}
+                        </h1>
+                        <div className="text-xs text-muted-foreground">
+                          Date uploaded:{" "}
+                          <span className="italic">{doc.date}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Size: <span className="italic">{doc.size/1000} kb</span>
+                        </div>
+                      </>
+                    )
+                  }
+                })}
               </>
             ) : (
               <div className="text-lg font-semibold py-1 border-dashed border border-gray-300 rounded-md">
@@ -111,7 +232,7 @@ const IndexPage = (props: Props) => {
                         />
                         <Button
                           className="mt-3"
-                          // onClick={() => handleFileChange(name)}
+                          onClick={() => handleFileChange(name)}
                         >
                           Submit
                         </Button>
