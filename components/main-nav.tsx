@@ -1,6 +1,5 @@
 import * as React from "react"
 import Link from "next/link"
-import { SignInButton } from "@clerk/nextjs"
 import { NavItem } from "@/types/nav"
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"

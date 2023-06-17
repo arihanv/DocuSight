@@ -1,45 +1,78 @@
-import Link from "next/link"
-import { SignInButton } from "@clerk/nextjs"
-import { UserPlus } from "lucide-react"
+"use client"
 
+import { useEffect, useState } from "react"
+import { SignInButton } from "@clerk/nextjs"
+import { Menu, UserPlus } from "lucide-react"
 import { siteConfig } from "@/config/site"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import { Button } from "@/components/ui/button"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export function SiteHeader() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(true)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 600)
+    }
+    window.addEventListener("resize", handleResize)
+    handleResize()
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen)
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            <SignInButton>
-              <Button className="flex flex-row gap-2">
-                Sign in
-                <UserPlus className="w-4 h-4" />
-              </Button>
-            </SignInButton>
-            <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div
-                className={buttonVariants({
-                  size: "sm",
-                  variant: "ghost",
-                })}
-              >
-                <Icons.gitHub className="h-5 w-5" />
-                <span className="sr-only">GitHub</span>
+            {isDesktop ? (
+              <>
+                <SignInButton>
+                  <Button className="flex flex-row gap-2">
+                    Sign in
+                    <UserPlus className="w-4 h-4" />
+                  </Button>
+                </SignInButton>
+                <ThemeToggle />
+              </>
+            ) : (
+              <div className="md:hidden">
+                <Button
+                  variant="outline"
+                  className="p-2 rounded-md"
+                  onClick={toggleMenu}
+                >
+                  <Menu className="w-6 h-6" />
+                </Button>
               </div>
-            </Link>
-            <ThemeToggle />
+            )}
           </nav>
         </div>
       </div>
+      {menuOpen && (
+        <div className="md:hidden">
+          <nav className="flex items-center gap-4 px-5 py-2">
+            {!isDesktop && (
+              <>
+                <SignInButton>
+                  <Button className="flex w-full flex-row gap-2">
+                    Sign in
+                    <UserPlus className="w-4 h-4" />
+                  </Button>
+                </SignInButton>
+
+                <ThemeToggle />
+              </>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   )
 }
