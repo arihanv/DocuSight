@@ -1,8 +1,10 @@
 "use client"
 
 import React from "react"
+import { encryptKey } from "@/api/utils"
+import { auth } from "@clerk/nextjs"
 import { Loader2, Upload } from "lucide-react"
-
+import { SignedIn } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,6 +24,7 @@ const IndexPage = (props: Props) => {
   const [uploading, setUploading] = React.useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [name, setName] = React.useState<string>("")
+  const [id, setId] = React.useState("")
 
   const tFile = {
     name: "The way the world works",
@@ -29,6 +32,9 @@ const IndexPage = (props: Props) => {
     size: "3.4 mb",
   }
 
+  React.useEffect(() => {
+    console.log(id)
+  }, [id])
 
   React.useEffect(() => {
     console.log(file)

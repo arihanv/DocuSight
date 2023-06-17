@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { SignInButton } from "@clerk/nextjs"
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import { Menu, UserPlus } from "lucide-react"
+
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { MainNav } from "@/components/main-nav"
@@ -33,12 +34,17 @@ export function SiteHeader() {
           <nav className="flex items-center space-x-1">
             {isDesktop ? (
               <>
+                <SignedOut>
                 <SignInButton>
-                  <Button className="flex flex-row gap-2">
+                  <Button className="flex w-full flex-row gap-2">
                     Sign in
                     <UserPlus className="w-4 h-4" />
                   </Button>
                 </SignInButton>
+                </SignedOut>
+                <SignedIn>
+                <UserButton />
+                </SignedIn>
                 <ThemeToggle />
               </>
             ) : (
@@ -60,12 +66,17 @@ export function SiteHeader() {
           <nav className="flex items-center gap-4 px-5 py-2">
             {!isDesktop && (
               <>
-                <SignInButton>
-                  <Button className="flex w-full flex-row gap-2">
-                    Sign in
-                    <UserPlus className="w-4 h-4" />
-                  </Button>
-                </SignInButton>
+                <SignedOut>
+                  <SignInButton>
+                    <Button className="flex w-full flex-row gap-2">
+                      Sign in
+                      <UserPlus className="w-4 h-4" />
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
 
                 <ThemeToggle />
               </>
