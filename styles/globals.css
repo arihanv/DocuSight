@@ -78,4 +78,32 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  .pdfContainer {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+  .cursor {
+    display: inline-block;
+    width: 1ch;
+    animation: flicker 0.5s infinite;
+    margin-bottom: 4px;
+  }
+  
+  .mesUser{
+    background-color: rgb(37 99 235) !important;
+    color: white;
+  }
+  
+  @keyframes flicker {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 }
