@@ -47,7 +47,12 @@ export default function IndexPage() {
                 height={250}
                 width={250}
               ></Image>
+              <div className="flex gap-2 items-center">
+              <div className="bg-green-400 text-white py-1 px-2.5 aspect-square rounded-lg">
+                1
+              </div>
               <div className="">Upload A PDF</div>
+              </div>
             </div>
             <div className="flex flex-col gap-1 items-center">
               <Image
@@ -57,29 +62,22 @@ export default function IndexPage() {
                 height={250}
                 width={250}
               ></Image>
+              <div className="flex gap-2 items-center">
+              <div className="bg-green-400 text-white py-1 px-2.5 aspect-square rounded-lg">
+                2
+              </div>
               <div className="">Chat With Our AI</div>
+              </div>
             </div>
           </div>
         </div>
+        <div className="text-muted-foreground text-sm mt-5">
+        Made By Arihan Varanasi
+        </div>
+        <div className="text-muted-foreground text-[0.70rem]">
+        Illustrations by Popsy.co
+        </div>
       </div>
-      {/* <div className="flex gap-4">
-        <Link
-          href={siteConfig.links.docs}
-          target="_blank"
-          rel="noreferrer"
-          className={buttonVariants()}
-        >
-          Documentation
-        </Link>
-        <Link
-          target="_blank"
-          rel="noreferrer"
-          href={siteConfig.links.github}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          GitHub
-        </Link>
-      </div> */}
     </section>
   )
 }
