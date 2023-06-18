@@ -2,9 +2,21 @@ import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { cloudDb, cloudStore } from "@/api/cloud"
 import { Loader2, Trash2 } from "lucide-react"
+import Cookie from "js-cookie"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 
 const FileCard = (props: any) => {
   const [loading, setLoading] = useState(false)
+  const [modalOpen, setModalOpen] = React.useState(false)
 
   async function handleDelete() {
     setLoading(true)
@@ -27,6 +39,15 @@ const FileCard = (props: any) => {
     window.location.reload()
   }
 
+  const handleRedirect = () => {
+    const id = Cookie.get("key")
+    if(id == null){
+        alert("Please enter your Open AI Key")
+    } else {
+        window.location.href = `/dashboard/${props.path}`
+    }
+  }
+
   return (
     <>
       <div className="relative flex flex-col">
@@ -36,7 +57,7 @@ const FileCard = (props: any) => {
         >
           <Trash2 size={20} />
         </button>
-        <Link href={`/dashboard/${props.path}`}>
+        <button className="text-start" onClick={handleRedirect}>
           <div className="rounded-lg">
             {" "}
             {!loading ? (
@@ -59,7 +80,7 @@ const FileCard = (props: any) => {
               </div>
             )}
           </div>
-        </Link>
+        </button>
       </div>
     </>
   )

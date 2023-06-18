@@ -1,11 +1,11 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 import { cloudDb, cloudStore } from "@/api/cloud"
 import { encryptKey } from "@/api/utils"
 import { useAuth } from "@clerk/nextjs"
 import { Loader2, Upload } from "lucide-react"
-
+import Cookie from "js-cookie"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -30,6 +30,7 @@ const IndexPage = (props: Props) => {
   const [id, setId] = React.useState("")
   const { isLoaded, userId, sessionId, getToken } = useAuth()
   const [docInfo, setDocInfo] = React.useState<any>({})
+  const [input, setInput] = React.useState<any>("")
 
 
   async function exp() {
@@ -48,7 +49,7 @@ const IndexPage = (props: Props) => {
     console.log(id)
     exp()
   }, [id])
-  
+
   const handleFileChange = async (name: string) => {
     if (id == "") return
     if (name == "") return
@@ -157,12 +158,37 @@ const IndexPage = (props: Props) => {
     return null
   }
 
+  const send = (input: string) => {
+    if (input == "" || input == Cookie.get("key")) return
+    Cookie.set("key", input)
+    setInput(input)
+  }
+
+  useEffect(() => {
+    if (Cookie.get("key") != null) {
+      setInput(Cookie.get("key"))
+    }
+  }, [input])
+
   return (
     <section className="container grid items-center gap-6 pb-8 py-5 md:py-8">
       <div className="flex flex-col items-center justify-center gap-4 w-full max-w-[950px] m-auto">
         <h1 className="text-5xl font-extrabold leading-tight tracking-tighter md:text-7xl">
           Dashboard
         </h1>
+        <div
+            id="anchor"
+            className="flex rounded-lg bg-white p-2 dark:bg-black"
+          >
+            <Input
+              className="focus-visible:ring-0"
+              type="password"
+              placeholder="Enter Open AI Key"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && send(input)}
+            />
+          </div>
         <div className="dark:bg-gray-900 bg-gray-100 w-full max-w-[700px] p-2.5 flex items-center justify-center h-[550px] rounded-xl">
           <div className="bg-background grid p-2.5 rounded-lg w-full max-w-[200px] gap-1">
             {Object.keys(docInfo).length !== 0 && docInfo.numDocs ? (
