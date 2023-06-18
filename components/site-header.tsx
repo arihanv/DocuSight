@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import { Menu, UserPlus } from "lucide-react"
 
 import { siteConfig } from "@/config/site"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 
@@ -35,23 +37,38 @@ export function SiteHeader() {
             {isDesktop ? (
               <>
                 <SignedOut>
-                <SignInButton redirectUrl={"/dashboard"}>
-                  <Button className="flex w-full flex-row gap-2">
-                    Sign in
-                    <UserPlus className="w-4 h-4" />
-                  </Button>
-                </SignInButton>
+                  <SignInButton redirectUrl={"/dashboard"}>
+                    <Button className="flex w-full flex-row">
+                      Sign in
+                      <UserPlus className="w-4 h-4" />
+                    </Button>
+                  </SignInButton>
                 </SignedOut>
                 <SignedIn>
-                <UserButton />
+                  <UserButton />
                 </SignedIn>
                 <ThemeToggle />
+                <Link
+                  href={siteConfig.links.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div
+                    className={buttonVariants({
+                      size: "sm",
+                      variant: "ghost",
+                    })}
+                  >
+                    <Icons.gitHub className="h-5 w-5" />
+                    <span className="sr-only">GitHub</span>
+                  </div>
+                </Link>
               </>
             ) : (
               <div className="md:hidden">
                 <Button
                   variant="outline"
-                  className="p-2 rounded-md"
+                  className="rounded-md"
                   onClick={toggleMenu}
                 >
                   <Menu className="w-6 h-6" />
@@ -77,8 +94,22 @@ export function SiteHeader() {
                 <SignedIn>
                   <UserButton />
                 </SignedIn>
-
                 <ThemeToggle />
+                <Link
+                  href={siteConfig.links.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div
+                    className={buttonVariants({
+                      size: "sm",
+                      variant: "ghost",
+                    })}
+                  >
+                    <Icons.gitHub className="h-5 w-5" />
+                    <span className="sr-only">GitHub</span>
+                  </div>
+                </Link>
               </>
             )}
           </nav>

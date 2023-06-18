@@ -181,17 +181,23 @@ const IndexPage = (props: Props) => {
         <h1 className="text-5xl font-extrabold leading-tight tracking-tighter md:text-7xl">
           Dashboard
         </h1>
-        <div id="anchor" className="flex rounded-lg bg-white p-2 dark:bg-black items-center gap-2">
+        <div
+          id="anchor"
+          className="flex rounded-lg bg-white p-2 dark:bg-black items-center gap-2"
+        >
           <Input
             className="focus-visible:ring-0"
             type="text"
-            placeholder="Enter Open AI Key"
+            placeholder="Enter Open AI Key and hit enter"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value)
+              send(e.target.value)
+            }}
             onKeyDown={(e) => e.key === "Enter" && send(input)}
           />
           <button onClick={() => handleDeleteKey()}>
-          <Trash color="red" />
+            <Trash color="red" />
           </button>
         </div>
         <div className="dark:bg-gray-900 bg-gray-100 w-full max-w-[700px] p-2.5 flex items-center justify-center h-[550px] rounded-xl">
@@ -226,7 +232,7 @@ const IndexPage = (props: Props) => {
                           <Loader2 size={30} />
                         </div>
                       ) : (
-                        <div className="text-gray-500 dark:text-gray-300">
+                        <div className="text-gray-500 dark:text-gray-300 px-10">
                           <Upload />
                         </div>
                       )}
