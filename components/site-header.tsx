@@ -38,7 +38,7 @@ export function SiteHeader() {
               <>
                 <SignedOut>
                   <SignInButton redirectUrl={"/dashboard"}>
-                    <Button className="flex w-full flex-row">
+                    <Button className="flex w-full flex-row gap-2">
                       Sign in
                       <UserPlus className="w-4 h-4" />
                     </Button>
