@@ -4,8 +4,9 @@ import React, { useEffect } from "react"
 import { cloudDb, cloudStore } from "@/api/cloud"
 import { encryptKey } from "@/api/utils"
 import { useAuth } from "@clerk/nextjs"
-import { Loader2, Upload } from "lucide-react"
 import Cookie from "js-cookie"
+import { Loader2, Trash, Upload } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -32,7 +33,12 @@ const IndexPage = (props: Props) => {
   const [docInfo, setDocInfo] = React.useState<any>({})
   const [input, setInput] = React.useState<any>("")
 
-
+  useEffect(() => {
+    if (Cookie.get("key") != null) {
+      setInput(Cookie.get("key"))
+    }
+  }, [input])
+  
   async function exp() {
     if (id == "") return
     const res = await cloudDb.get(id)
@@ -44,7 +50,7 @@ const IndexPage = (props: Props) => {
     }
     console.log("done")
   }
-  
+
   React.useEffect(() => {
     console.log(id)
     exp()
@@ -164,11 +170,10 @@ const IndexPage = (props: Props) => {
     setInput(input)
   }
 
-  useEffect(() => {
-    if (Cookie.get("key") != null) {
-      setInput(Cookie.get("key"))
-    }
-  }, [input])
+  const handleDeleteKey = () => {
+    Cookie.remove("key")
+    setInput("")
+  }
 
   return (
     <section className="container grid items-center gap-6 pb-8 py-5 md:py-8">
@@ -176,23 +181,23 @@ const IndexPage = (props: Props) => {
         <h1 className="text-5xl font-extrabold leading-tight tracking-tighter md:text-7xl">
           Dashboard
         </h1>
-        <div
-            id="anchor"
-            className="flex rounded-lg bg-white p-2 dark:bg-black"
-          >
-            <Input
-              className="focus-visible:ring-0"
-              type="password"
-              placeholder="Enter Open AI Key"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send(input)}
-            />
-          </div>
+        <div id="anchor" className="flex rounded-lg bg-white p-2 dark:bg-black items-center gap-2">
+          <Input
+            className="focus-visible:ring-0"
+            type="password"
+            placeholder="Enter Open AI Key"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send(input)}
+          />
+          <button onClick={() => handleDeleteKey()}>
+          <Trash color="red" />
+          </button>
+        </div>
         <div className="dark:bg-gray-900 bg-gray-100 w-full max-w-[700px] p-2.5 flex items-center justify-center h-[550px] rounded-xl">
-          <div className="bg-background grid p-2.5 rounded-lg w-full max-w-[200px] gap-1">
+          <div className="bg-background grid p-2.5 max-w-[400px] rounded-lg gap-1 w-fit">
             {Object.keys(docInfo).length !== 0 && docInfo.numDocs ? (
-              <>
+              <div className="p-2">
                 {Object.keys(docInfo).map((key) => {
                   if (key.substring(0, 4) == "docs") {
                     const doc = docInfo[key]
@@ -207,7 +212,7 @@ const IndexPage = (props: Props) => {
                     )
                   }
                 })}
-              </>
+              </div>
             ) : (
               <div className="text-lg font-semibold py-1 border-dashed border border-gray-300 rounded-md">
                 <Dialog open={modalOpen}>

@@ -1,5 +1,5 @@
 import React from "react"
-
+import Chat from "@/components/chat"
 import PdfViewer from "@/components/pdfViewer"
 
 export default function viewer({
@@ -21,6 +21,11 @@ export default function viewer({
             </div>
           </div>
         </div>
+        <div className="flex flex-col gap-5 rounded-xl bg-gray-100 p-3 dark:bg-gray-900">
+                <Chat path={`${params.id}/${params.num}`} data={
+                  { title: "this pdf" }
+                }  ></Chat>
+            </div>
       </div>
     </section>
   )

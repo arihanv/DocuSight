@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from "react"
-import Link from "next/link"
 import { cloudDb, cloudStore } from "@/api/cloud"
 import { Loader2, Trash2 } from "lucide-react"
 import Cookie from "js-cookie"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-
 const FileCard = (props: any) => {
   const [loading, setLoading] = useState(false)
-  const [modalOpen, setModalOpen] = React.useState(false)
+
 
   async function handleDelete() {
     setLoading(true)
@@ -27,10 +16,8 @@ const FileCard = (props: any) => {
     if (res !== null) {
       if (props.path) {
         await cloudStore.delete(props.path)
+        await cloudStore.delete(props.path.replace(".pdf", "_embedding"))
       }
-      //   if (embeddedThumbPath) {
-      //     await pdfStore.delete(embeddedThumbPath)
-      //   }
       await cloudDb.update(
         { [docNum]: cloudDb.util.trim(), numDocs: (res.numDocs as number) - 1 },
         key
@@ -53,7 +40,7 @@ const FileCard = (props: any) => {
       <div className="relative flex flex-col">
         <button
           onClick={handleDelete}
-          className="absolute -right-5 -top-5 rounded-xl bg-gray-200 p-2 text-red-600"
+          className="absolute -right-8 -top-8 rounded-xl bg-gray-200 p-2 text-red-600"
         >
           <Trash2 size={20} />
         </button>
@@ -62,7 +49,7 @@ const FileCard = (props: any) => {
             {" "}
             {!loading ? (
               <>
-                <h1 className="text-lg font-semibold border-b py-1 leading-6 mb-1">
+                <h1 className="text-lg font-semibold border-b py-1 leading-6 mb-1 max-w-full break-words">
                   {props.name}
                 </h1>
                 <div className="text-xs text-muted-foreground">
