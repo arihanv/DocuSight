@@ -1,6 +1,8 @@
+"use client"
 import React from "react"
 import Chat from "@/components/chat"
 import PdfViewer from "@/components/pdfViewer"
+import Cookie from "js-cookie"
 
 export default function viewer({
   params,
@@ -10,6 +12,7 @@ export default function viewer({
     num: string
   }
 }) {
+
   return (
     <section className="m-auto grid max-w-[1200px] items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="grid grid-cols-[1.25fr,1fr] items-center justify-center gap-8">

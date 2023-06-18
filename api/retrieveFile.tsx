@@ -5,8 +5,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory"
 import { cloudStore } from "./cloud"
 
 async function getData(query: string) {
-    // https://docs-1-a5187122.deta.app
-  const url = `${process.env.DETA_URL}/splits?url=${encodeURIComponent(
+  const url = `${process.env.NEXT_PUBLIC_DETA_URL}/splits?url=${encodeURIComponent(
     query
   )}`
 
