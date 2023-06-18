@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     appDir: true,
+    outputFileTracingIgnores: ["**canvas**"],
   },
   webpack: (config) => {
     config.externals = [...config.externals, "canvas", "jsdom","encoding","detalib"];

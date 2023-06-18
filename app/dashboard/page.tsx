@@ -38,7 +38,7 @@ const IndexPage = (props: Props) => {
       setInput(Cookie.get("key"))
     }
   }, [input])
-  
+
   async function exp() {
     if (id == "") return
     const res = await cloudDb.get(id)
@@ -184,7 +184,7 @@ const IndexPage = (props: Props) => {
         <div id="anchor" className="flex rounded-lg bg-white p-2 dark:bg-black items-center gap-2">
           <Input
             className="focus-visible:ring-0"
-            type="password"
+            type="text"
             placeholder="Enter Open AI Key"
             value={input}
             onChange={(e) => setInput(e.target.value)}
